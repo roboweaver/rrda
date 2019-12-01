@@ -108,7 +108,6 @@ func resolve(w http.ResponseWriter, r *http.Request, server string, domain strin
 
 	c := new(dns.Client)
 
-Redo:
 	in, _, err := c.Exchange(m, server) // Second return value is RTT, not used for now
 
 	if err == nil {
@@ -122,9 +121,6 @@ Redo:
 		default:
 			jsonify(w, r, in.Question, in.Answer, in.Ns, in.Extra)
 		}
-	} else if err == dns.ErrTruncated {
-		c.Net = "tcp"
-		goto Redo
 	} else {
 		error(w, 500, 501, "DNS server could not be reached")
 	}
